@@ -15,14 +15,23 @@
     "build:app": "vite build",
     "docs": "jsdoc -c jsdoc.conf",
     "build": "vite build && jsdoc -c jsdoc.conf",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",
     "three": "^0.184.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.0.0",
     "jsdoc": "^4.0.5",
+    "prettier": "^3.3.0",
     "vite": "^6.4.2"
   }
 }
