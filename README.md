@@ -31,7 +31,12 @@ deploys `dist/` to the `ophiocus.github.io` Pages site.
 - `public/` — runtime assets (`gltf/`, `hdri/`, `textures/`)
 - `jsdoc.conf` — JSDoc config (output to `dist/docs`)
 
-See `js/README.md` for the module/architecture notes (also the JSDoc home page).
+## Docs
+
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — module graph, the animate
+  heartbeat, the animation engine, and the tween.js v25 group requirement.
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — modernization status and next steps.
+- `js/README.md` — module notes (also the generated JSDoc home page).
 
 ## Stack
 
