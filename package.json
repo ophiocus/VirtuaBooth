@@ -1,10 +1,28 @@
 {
+  "name": "virtuabooth",
+  "version": "1.0.0",
+  "description": "VirtuaBooth — an interactive three.js product showroom (Raspberry Pi 5 configurator).",
+  "type": "module",
+  "license": "MIT",
+  "author": "Carlos Santana <csantanad@gmail.com>",
+  "homepage": "https://ophiocus.github.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ophiocus/VirtuaBooth.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build:app": "vite build",
+    "docs": "jsdoc -c jsdoc.conf",
+    "build": "vite build && jsdoc -c jsdoc.conf",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@tweenjs/tween.js": "^21.0.0",
-    "three": "^0.158.0"
+    "@tweenjs/tween.js": "^25.0.0",
+    "three": "^0.184.0"
   },
   "devDependencies": {
-    "jsdoc": "^4.0.2",
-    "vite": "^4.5.0"
+    "jsdoc": "^4.0.5",
+    "vite": "^6.4.2"
   }
 }

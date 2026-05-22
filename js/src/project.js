@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GroundProjectedSkybox } from 'three/addons/objects/GroundProjectedSkybox.js';
+import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 import { Water } from 'three/addons/objects/Water.js';
 import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
@@ -229,12 +229,10 @@ const Project = (() => {
           context.get.scene.background = texture;
           context.get.scene.environment = texture;
 
-          // Use skybox addon
-          const skybox = new GroundProjectedSkybox(texture);
+          // Use skybox addon (GroundedSkybox takes height + radius as constructor args)
+          const skybox = new GroundedSkybox(texture, 20, 200);
           skybox.name = "Original Skybox";
           skybox.scale.setScalar(100);
-          skybox.height = 20;
-          skybox.radius = 200;
           skybox.visible = false;
           context.get.scene.add(skybox);
 
@@ -363,7 +361,7 @@ const Project = (() => {
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1;
       renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
 
 
       const r_target = document.querySelector("#canvasroot");

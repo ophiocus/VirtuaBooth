@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import * as TWEEN from '@tweenjs/tween.js';
 import { Project } from '/js/src/project.js'
 import { Context } from '/js/src/context.js'
 import { Handlers } from '/js/src/handlers';
@@ -23,6 +23,12 @@ const context = Context;
 
 // Add to context: clock
 context.add({ 'name': "clock", 'obj': new THREE.Clock() });
+
+// tween.js v25 no longer auto-registers tweens to a global group — each tween
+// must opt into a Group. Share one Group via context so Handlers can register
+// tweens into it, and advance it every frame in the animate loop below.
+const tweenGroup = new TWEEN.Group();
+context.add({ 'name': "tweenGroup", 'obj': tweenGroup });
 
 /**
  * @constant {THREE.scene} scene The scene to render.
@@ -86,7 +92,8 @@ const animate = () => {
     
     // natural "in scope" render steps.
     mixer.update(delta);
-    TWEEN.update();
+    // preserve=false removes finished tweens from the group automatically.
+    tweenGroup.update(undefined, false);
     controls.update(delta);
     Project.render();
     

@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { Context } from '/js/src/context.js';
-import TWEEN from '@tweenjs/tween.js';
-import { GroundProjectedSkybox } from 'three/addons/objects/GroundProjectedSkybox.js';
+import * as TWEEN from '@tweenjs/tween.js';
 
 /**
  * Handlers is the core event router for interactivity.<br>
@@ -347,8 +346,17 @@ const Handlers = (() => {
   const simpleTween = (target, vector, speed = 700, callback = null) => {
     console.group("simpleTween");
     console.log(target);
+    // A tween stack can carry a leading config marker (e.g. { concurrent: false });
+    // when that marker reaches here the target is not a tweenable object. Skip the
+    // tween but keep draining the queue so the chain and its callbacks still run.
+    if (!target || typeof target !== 'object') {
+      if (callback) callback();
+      tweeningTween();
+      console.groupEnd();
+      return;
+    }
     try {
-      new TWEEN.Tween(target)
+      new TWEEN.Tween(target, context.get.tweenGroup)
         .to(vector, speed)
         // .onUpdate() lerp maybe
         .easing(TWEEN.Easing.Cubic.InOut)

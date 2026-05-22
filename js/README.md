@@ -1,4 +1,4 @@
-# Raspberry-PI 5 Three JS showroom.
+# VirtuaBooth — Raspberry Pi 5 Three.js showroom.
 Using three js to explore product showroom capabilities.<br>
 
 ## Features
