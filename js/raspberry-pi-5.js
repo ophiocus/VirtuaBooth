@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
-import { Project } from '/js/src/project.js'
-import { Context } from '/js/src/context.js'
+import { Project } from '/js/src/project.js';
+import { Context } from '/js/src/context.js';
 import { Handlers } from '/js/src/handlers';
 
 /**
@@ -9,7 +9,7 @@ import { Handlers } from '/js/src/handlers';
  * @module Raspberry
  */
 
-console.group("raspberry js");
+console.group('raspberry js');
 
 /**
  * @constant {Handlers} handlers Handlers Module as an instance.
@@ -22,36 +22,36 @@ const handlers = Handlers;
 const context = Context;
 
 // Add to context: clock
-context.add({ 'name': "clock", 'obj': new THREE.Clock() });
+context.add({ name: 'clock', obj: new THREE.Clock() });
 
 // tween.js v25 no longer auto-registers tweens to a global group — each tween
 // must opt into a Group. Share one Group via context so Handlers can register
 // tweens into it, and advance it every frame in the animate loop below.
 const tweenGroup = new TWEEN.Group();
-context.add({ 'name': "tweenGroup", 'obj': tweenGroup });
+context.add({ name: 'tweenGroup', obj: tweenGroup });
 
 /**
  * @constant {THREE.scene} scene The scene to render.
- * 
+ *
  */
 const scene = Project.setStage();
 
 /**
  * @constant {THREE.camera} camera The camera of the scene.
- * 
+ *
  */
 const camera = Project.setCamera();
 
 /**
  * @member {THREE.renderer} renderer The renderer engine instance.
- * 
+ *
  */
 let renderer = false;
 
 /**
  * @member {THREE.AnimationMixer} mixer The mixer instance.
  */
-let mixer = false; 
+let mixer = false;
 
 /**
  * @member {OrbitControls} controls The Orbit Controls instance.
@@ -63,7 +63,6 @@ Project.loadGltfScene();
 
 // Promise to load the renderer, and attach controls.
 Project.setRenderer();
-
 
 /**
  * Animate is the central heartbeat of all animation processes.
@@ -80,29 +79,29 @@ const animate = () => {
     if (!mixer) {
       mixer = context.get.mixer;
       console.log(`Swapping mixer from context: ${typeof mixer}`);
-    };
+    }
     if (!controls) {
       controls = context.get.controls;
       console.log(`Swapping controls from context: ${typeof controls}`);
-    };
+    }
     if (!renderer) {
       renderer = context.get.renderer;
       console.log(`Swapping renderer from context: ${typeof renderer}`);
-    };
-    
+    }
+
     // natural "in scope" render steps.
     mixer.update(delta);
     // preserve=false removes finished tweens from the group automatically.
     tweenGroup.update(undefined, false);
     controls.update(delta);
     Project.render();
-    
+
     renderer.render(context.get.scene, context.get.camera);
   } catch (e) {
     console.log(`Main Animate: ${e.message} `);
   }
-}
+};
 
 // 3D Runtime starts
 animate();
-console.groupEnd(); 
+console.groupEnd();

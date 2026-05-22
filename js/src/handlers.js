@@ -7,7 +7,7 @@ import * as TWEEN from '@tweenjs/tween.js';
  * The handlers module implements the manners in which we want to resposnd to user and system events.
  * @module Handlers
  * @exports Handlers
- * 
+ *
  * @todo Confirm naming convention of object definitions and scopes.
  */
 const Handlers = (() => {
@@ -15,7 +15,7 @@ const Handlers = (() => {
    * The Context constant provides a neutral scope to use as part of the state handling tasks. see {@link module:Context}
    * @name module:Handlers.context
    * @private
-   * 
+   *
    */
   const context = Context;
 
@@ -25,15 +25,15 @@ const Handlers = (() => {
    * obj - string: obj represents a single animation contained in the current scene, it gets added to the tweenStack and play is invoked. <br>
    * obj - array: obj contains a list of animation names to play, it can also contain callback functions as array items. <br>
    * obj - object: obj contains configuration parameters as properties, eg 'concurrent':true
-   * 
-   * @class 
+   *
+   * @class
    * @name Handlers#animationAnim
-   * @param {string|array|object} obj - A container of animation and callback instructions. 
+   * @param {string|array|object} obj - A container of animation and callback instructions.
    * @alias module:Handlers.animationAnim
-   * 
+   *
    */
   const animationAnim = (obj = null) => {
-    console.group("animationAnim");
+    console.group('animationAnim');
     /**
      * Declaration of context.get.config
      * @name Handlers#animationAnim.context
@@ -67,33 +67,29 @@ const Handlers = (() => {
     const play = () => {
       if (context.get.config.animStack.length) {
         context.get.config.currentAnimation = context.get.config.animStack.shift();
-        
+
         // triage current animation
-        if (typeof context.get.config.currentAnimation == 'function') {
+        if (typeof context.get.config.currentAnimation === 'function') {
           // function request
           context.get.config.currentAnimation();
           context.get.config.currentAnimation = '';
           animationAnim();
-        }
-        else if (
+        } else if (
           typeof context.get.config.currentAnimation === 'object' &&
           context.get.config.currentAnimation !== null &&
           context.get.config.currentAnimation.hasOwnProperty('concurrent')
         ) {
-          console.log("CONCURRENT TWEEN", context.get.config.currentAnimation.concurrent);
+          console.log('CONCURRENT TWEEN', context.get.config.currentAnimation.concurrent);
           if (context.get.config.currentAnimation.concurrent === true) {
-            while(context.get.config.animStack.length){
+            while (context.get.config.animStack.length) {
               const animStack_item = context.get.config.animStack.shift();
-              typeof  animStack_item === 'string' ?
-              simpleAnim(animStack_item) :
-              animStack_item();
+              typeof animStack_item === 'string' ? simpleAnim(animStack_item) : animStack_item();
             }
-          }else {
+          } else {
             animationAnim();
           }
-        }
-        else {
-          console.log("GOING SIMPLE", context.get.config.currentAnimation);
+        } else {
+          console.log('GOING SIMPLE', context.get.config.currentAnimation);
           simpleAnim(context.get.config.currentAnimation);
         }
       }
@@ -109,7 +105,7 @@ const Handlers = (() => {
     } else if (obj !== null && typeof obj === 'string') {
       // A single animation
       add(obj);
-      play()
+      play();
     } else {
       play();
     }
@@ -121,14 +117,14 @@ const Handlers = (() => {
    * It has a polymorphic behaviour that is trigerred by the type of the param content:<br>
    * obj - array: obj represents a sequence of tweens, each an array in itself.<br>
    * obj - object: obj is an configuration object whose attributes are parsed for values, eg.- concurrent.<br>
-   * 
+   *
    * @class
    * @name Handlers#tweeningTween
    * @param {array|object|null} obj - A container of Tween and callback instructions.
    * @alias module:Handlers.tweeningTween
    */
   const tweeningTween = (obj = null) => {
-    console.group("tweeningTween");
+    console.group('tweeningTween');
     const tweenStack = context.get.config.tweenStack;
 
     /**
@@ -139,33 +135,37 @@ const Handlers = (() => {
      * @private
      */
     const add = (obj) => {
-
       tweenStack.push(obj);
     };
 
     /**
      * The play method relies on the Context instance, gathering information from the tweenStack. See {@link module:Context#}
-     * 
+     *
      * @method
      * @name Handlers#tweeningTween#play
      * @private
      */
     const play = () => {
-
       if (context.get.config.tweenStack.length) {
-        if (typeof context.get.config.tweenStack[0] == 'object' && context.get.config.tweenStack[0].concurrent) {
+        if (
+          typeof context.get.config.tweenStack[0] === 'object' &&
+          context.get.config.tweenStack[0].concurrent
+        ) {
           // purge config
           const purge = context.get.config.tweenStack.shift();
-          console.log("CONCURRENT PLAY", purge);
+          console.log('CONCURRENT PLAY', purge);
           playConcurrent();
-        }
-        else {
+        } else {
           context.get.config.tweenCurrentAnimation = context.get.config.tweenStack.shift();
           simpleTween(
             context.get.config.tweenCurrentAnimation[0],
             context.get.config.tweenCurrentAnimation[1],
-            context.get.config.tweenCurrentAnimation[2] ? context.get.config.tweenCurrentAnimation[2] : 700,
-            context.get.config.tweenCurrentAnimation[3] ? context.get.config.tweenCurrentAnimation[3] : null
+            context.get.config.tweenCurrentAnimation[2]
+              ? context.get.config.tweenCurrentAnimation[2]
+              : 700,
+            context.get.config.tweenCurrentAnimation[3]
+              ? context.get.config.tweenCurrentAnimation[3]
+              : null
           );
         }
       }
@@ -173,22 +173,17 @@ const Handlers = (() => {
 
     /**
      * The play concurrent method consumes the tweenStack in a single iteration and doesnt wait for event loops to complete
-     * 
+     *
      * @method
      * @name Handlers#tweeningTween#playConcurrent
      * @private
      */
     const playConcurrent = () => {
       for (const anim of tweenStack) {
-        simpleTween(
-          anim[0],
-          anim[1],
-          anim[2] ? anim[2] : 700,
-          anim[3] ? anim[3] : null
-        );
+        simpleTween(anim[0], anim[1], anim[2] ? anim[2] : 700, anim[3] ? anim[3] : null);
         context.get.config.tweenStack = [];
       }
-    }
+    };
 
     // runtime logic
     if (Array.isArray(obj)) {
@@ -209,10 +204,9 @@ const Handlers = (() => {
    * @alias module:Handlers.changeSky
    * @param {string} tex_ - A texture file name available in the default textures folder.
    */
-  const changeSky = (tex_ = "blender_1.jpg") => {
-    console.group("changeSky")
+  const changeSky = (tex_ = 'blender_1.jpg') => {
+    console.group('changeSky');
     try {
-
       const tex = `/hdri/${tex_}`;
 
       // Import from context: scene
@@ -226,7 +220,7 @@ const Handlers = (() => {
       const renderer = context.get.renderer;
 
       // Import writeable from context: skybox
-      let skybox = context.get.skybox;
+      const skybox = context.get.skybox;
 
       // Set emissive intensity.
       obj.material.emissiveIntensity = 1;
@@ -234,9 +228,9 @@ const Handlers = (() => {
       // Texture loader for the Sky Dome and Ground Projected Sky Box
       new THREE.TextureLoader().load(
         tex,
-        texture => {
+        (texture) => {
           try {
-            //Update Texture for the SkyDome.            
+            //Update Texture for the SkyDome.
             texture.flipY = false;
             texture.wrapS = THREE.RepeatWrapping;
             texture.repeat.x = -1;
@@ -247,9 +241,6 @@ const Handlers = (() => {
             obj.material.map = texture;
             obj.material.emissiveMap = texture;
             obj.material.needsUpdate = true;
-
-
-
 
             // // Reflog skybox
             const bgtex = texture.clone();
@@ -271,24 +262,21 @@ const Handlers = (() => {
             scene.environment = bgtex;
 
             // general pipeline intensity
-            context.get.renderer.toneMappingExposure = .5;
+            context.get.renderer.toneMappingExposure = 0.5;
           } catch (e) {
-            console.error(e.message)
+            console.error(e.message);
           }
         },
         // called while loading is progressing
         (xhr) => {
-
-          console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-
+          console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
         },
         // called when loading has errors
         (error) => {
-          console.log(`There was an Error Loading the GLTF: ${error.message}`, "error");
+          console.log(`There was an Error Loading the GLTF: ${error.message}`, 'error');
         }
-      )
-    }
-    catch (e) {
+      );
+    } catch (e) {
       console.log(`changeSky ${e.message}`);
     }
     console.groupEnd();
@@ -300,12 +288,14 @@ const Handlers = (() => {
    * @param {string|function} anim - An animation clip string to play, or a callback function.
    */
   const simpleAnim = (anim = false) => {
-    console.group("simpleAnim");
-    console.log("anim:", anim)
+    console.group('simpleAnim');
+    console.log('anim:', anim);
     try {
-      !anim ?
-        () => { throw new Error('simpleAnim error: anim param not provided') } :
-        '';
+      !anim
+        ? () => {
+            throw new Error('simpleAnim error: anim param not provided');
+          }
+        : '';
 
       // Import from context: mixer
       const mixer = context.get.mixer;
@@ -328,7 +318,6 @@ const Handlers = (() => {
         action.timeScale *= -1;
       }
       action.play();
-      
     } catch (e) {
       console.log(`e.message: ${e.message}`);
     }
@@ -344,7 +333,7 @@ const Handlers = (() => {
    * @param {function} callback - Callback code to be executed on completion.
    */
   const simpleTween = (target, vector, speed = 700, callback = null) => {
-    console.group("simpleTween");
+    console.group('simpleTween');
     console.log(target);
     // A tween stack can carry a leading config marker (e.g. { concurrent: false });
     // when that marker reaches here the target is not a tweenable object. Skip the
@@ -361,7 +350,9 @@ const Handlers = (() => {
         // .onUpdate() lerp maybe
         .easing(TWEEN.Easing.Cubic.InOut)
         .start()
-        .onStart((e) => { context.get.config.tweenCurrentAnimation = 'SimpleTween'; })
+        .onStart((e) => {
+          context.get.config.tweenCurrentAnimation = 'SimpleTween';
+        })
         .onComplete((e) => {
           context.get.config.tweenCurrentAnimation = '';
           if (callback) {
@@ -383,7 +374,7 @@ const Handlers = (() => {
    * @returns void
    */
   const featureAnim = (feature) => {
-    console.group("featureAnim");
+    console.group('featureAnim');
     // prevent stacking animations
     if (context.get.config.currentAnimation !== '') {
       return;
@@ -395,7 +386,7 @@ const Handlers = (() => {
       context.get.camera.position,
       // Vector
       new THREE.Vector3().addVectors(
-        new THREE.Vector3(-0.0712, .112, .1010),
+        new THREE.Vector3(-0.0712, 0.112, 0.101),
         context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target.positionTo
       ),
       // Speed
@@ -406,43 +397,42 @@ const Handlers = (() => {
 
     // feature animation sequences
     switch (feature) {
-      case "activeCooler":
-        console.log("ACTIVE COOLER TRIGGER",context.get.config.sceneCurrentCase);
-        context.get.config.sceneCurrentCase !== '' ? // Terniary is the question asked
-          animationAnim(
-            [
+      case 'activeCooler':
+        console.log('ACTIVE COOLER TRIGGER', context.get.config.sceneCurrentCase);
+        context.get.config.sceneCurrentCase !== '' // Terniary is the question asked
+          ? animationAnim([
               context.get.config.sceneCurrentCase,
               'Active-CoolerAction',
-              context.get.config.sceneCurrentCase
-            ]) :// Terniary replaces if else
-          animationAnim([
-            'Active-CoolerAction',
-          ]); // Terniary is the statement
+              context.get.config.sceneCurrentCase,
+            ]) // Terniary replaces if else
+          : animationAnim(['Active-CoolerAction']); // Terniary is the statement
         break;
 
-      case "sdCard":
+      case 'sdCard':
         animationAnim('SD_CARD_Action');
         break;
       default:
       // Wonder about the new normal.
-    };
+    }
     iddleAnim();
     console.groupEnd();
   };
 
   /**
    * The Section Tween generates camera movement that does not interfere with the scene.<br>
-   * Section tweens 
+   * Section tweens
    * @alias module:Handlers.SectionTween
    * @param {string} target_id - A convention of a given coordinates entry, see {@link module:Context}.
    * @returns void
    */
   const SectionTween = (target_id) => {
-
-    console.group("SectionTween");
+    console.group('SectionTween');
     const tweenStack = [
-      [context.get.controls.object.position, new THREE.Vector3().addVectors(context.coords.target, context.coords[target_id])],
-      [context.get.controls.target, context.coords.target]
+      [
+        context.get.controls.object.position,
+        new THREE.Vector3().addVectors(context.coords.target, context.coords[target_id]),
+      ],
+      [context.get.controls.target, context.coords.target],
     ];
 
     tweeningTween(tweenStack);
@@ -460,21 +450,25 @@ const Handlers = (() => {
    * @returns void
    */
   const onColorTweenColor = (color) => {
-    console.group("onColorTweenColor");
+    console.group('onColorTweenColor');
     const { r, g, b } = color;
-    simpleTween(context.get.scene.getObjectByName('Cases_char').children[0].material.color, { r: (r / 255), g: (g / 255), b: (b / 255) });
+    simpleTween(context.get.scene.getObjectByName('Cases_char').children[0].material.color, {
+      r: r / 255,
+      g: g / 255,
+      b: b / 255,
+    });
     console.groupEnd();
   };
 
   /**
-   * The case Char(acter) Anim(ation) handles an individual object state within context parameters, 
+   * The case Char(acter) Anim(ation) handles an individual object state within context parameters,
    * using them to process logic for the animation requirement.
    * @alias module:Handlers.caseCharAnim
    * @param {string} anim - A pre-established case animation.
    * @returns void
    */
   const caseCharAnim = (anim) => {
-    console.group("char")
+    console.group('char');
 
     // import from context, current animation
     const anim_check = context.get.config.currentAnimation;
@@ -482,7 +476,7 @@ const Handlers = (() => {
     let caseTweenStack = [];
     context.get.config.currentAnimation = anim;
 
-    console.log(anim_check, anim, case_check)
+    console.log(anim_check, anim, case_check);
     // Case animations (from Blender Action to GLTF Animation, converted)
     // Bottom Animation
     const anim_bottom = 'CaseBottomAction';
@@ -492,7 +486,7 @@ const Handlers = (() => {
       'CaseTopAction',
       'CaseTopGpioAccessAction',
       'CaseTopHexagonsAction',
-      'CaseTopPortAccessAction'
+      'CaseTopPortAccessAction',
     ];
 
     // prevent overlapping animations.
@@ -502,23 +496,23 @@ const Handlers = (() => {
       THREE.AnimationClip.findByName(context.get.gltf.animations, anim_bottom)
     );
 
-    let anims_Stack = [];
+    const anims_Stack = [];
     // Treat overlapping Animations to the active menu pattern
     // get all animations of top
     for (const anim_item of anims_top) {
-      console.log("FOR: ", anim_item, anim, anim_check,);
-      let anim_runner = THREE.AnimationClip.findByName(context.get.gltf.animations, anim_item);
-      let topAction = context.get.mixer.clipAction(anim_runner);
-      let caseIsActive = bottomAction.time > 0 && topAction.time > 0 ? true : false;
-      let caseIsStoped = bottomAction.time === 0 && topAction.time === 0 ? true : false;
+      console.log('FOR: ', anim_item, anim, anim_check);
+      const anim_runner = THREE.AnimationClip.findByName(context.get.gltf.animations, anim_item);
+      const topAction = context.get.mixer.clipAction(anim_runner);
+      const caseIsActive = bottomAction.time > 0 && topAction.time > 0 ? true : false;
+      const caseIsStoped = bottomAction.time === 0 && topAction.time === 0 ? true : false;
 
       if (anim_item != anim) {
-        console.log("anim_item != anim");
+        console.log('anim_item != anim');
         if (caseIsActive) {
-          console.log("anim_item != anim::caseIsActive", caseIsActive);
+          console.log('anim_item != anim::caseIsActive', caseIsActive);
           anims_Stack.unshift(anim_item);
         } else {
-          console.log("anim_item != anim::caseIsStoped", caseIsStoped)
+          console.log('anim_item != anim::caseIsStoped', caseIsStoped);
         }
       } else {
         // Toggle current Bottom
@@ -529,22 +523,24 @@ const Handlers = (() => {
             [
               context.get.scene.getObjectByName(context.get.config.subject).position,
               new THREE.Vector3().addVectors(
-                context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target.positionTo,
+                context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target
+                  .positionTo,
                 context.coords.sbc_offset_jump
               ),
               caseIsActive ? 1400 : 300,
-              simpleAnim(anim_bottom)
+              simpleAnim(anim_bottom),
             ],
             [
               context.get.scene.getObjectByName(context.get.config.subject).position,
-              context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target.positionTo,
+              context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target
+                .positionTo,
               caseIsStoped ? 1400 : 300,
               () => {
                 // Set context: sceneCurrentCase, currentAnimation
                 context.get.config.sceneCurrentCase = caseIsActive ? '' : anim;
                 context.get.config.currentAnimation = '';
-              }
-            ]
+              },
+            ],
           ];
 
           if (caseIsActive) {
@@ -553,7 +549,7 @@ const Handlers = (() => {
         }
         context.get.config.sceneCurrentCase = caseIsActive ? '' : anim;
       }
-    };
+    }
 
     // Toggle top
     anims_Stack.push(anim);
@@ -574,8 +570,12 @@ const Handlers = (() => {
    * @returns void
    */
   const sceneStageAnim = (stage) => {
-    console.group("sceneStageAnim");
-    console.log(stage, context.get.config.sceneCurrentStage, context.get.config.sceneCurrentAnimation);
+    console.group('sceneStageAnim');
+    console.log(
+      stage,
+      context.get.config.sceneCurrentStage,
+      context.get.config.sceneCurrentAnimation
+    );
     // prevent running stage animation if stage is self
     if (context.get.config.sceneCurrentStage == stage) return;
 
@@ -591,95 +591,94 @@ const Handlers = (() => {
     // A Stage can be defined as all props that are active and visible within the skydome at any one given point.
     const stageProps = {
       // lights{}
-      'lights': {
+      lights: {
         // sea[]
-        'sea': {
+        sea: {
           // proplist
         },
         // grassland[]
-        'grassland': {
+        grassland: {
           // proplist
         },
         // snow[]
-        'snow': {
+        snow: {
           // proplist
         },
       },
       // anim into place
-      'bootProps': {
-        'sea': {
-          'canoe': {
-            'spawnAnim': 'KenuAction'
+      bootProps: {
+        sea: {
+          canoe: {
+            spawnAnim: 'KenuAction',
           },
-          'paddle': {
-            'spawnAnim': 'woodenRowAction'
+          paddle: {
+            spawnAnim: 'woodenRowAction',
           },
-          'fishingRod': {},
-          'target': {
-            'positionTo': new THREE.Vector3(0, 0.47375, -2.652),
-          }
+          fishingRod: {},
+          target: {
+            positionTo: new THREE.Vector3(0, 0.47375, -2.652),
+          },
         },
-        'grassland': {
-          'bench': {
-            'spawnAnim': 'BenchAction'
+        grassland: {
+          bench: {
+            spawnAnim: 'BenchAction',
           },
-          'beer': {
-            'spawnAnim': 'BeerAction'
+          beer: {
+            spawnAnim: 'BeerAction',
           },
-          'target': {
-            'positionTo': new THREE.Vector3(0, 0.71684, 0),
-          }
+          target: {
+            positionTo: new THREE.Vector3(0, 0.71684, 0),
+          },
         },
-        'snow': {
-          'sled': {
-            'spawnAnim': 'DogSledAction'
+        snow: {
+          sled: {
+            spawnAnim: 'DogSledAction',
           },
-          'goggles': {
-            'spawnAnim': 'gogglesAction'
+          goggles: {
+            spawnAnim: 'gogglesAction',
           },
-          'target': {
-            'positionTo': new THREE.Vector3(0.057598, 0.855723, -1.05209),
-          }
+          target: {
+            positionTo: new THREE.Vector3(0.057598, 0.855723, -1.05209),
+          },
         },
-        'icosphere': {
-          'icosphere': {
-            'spawnAnim': 'IcosphereAction'
+        icosphere: {
+          icosphere: {
+            spawnAnim: 'IcosphereAction',
           },
-          'target': {
-            'positionTo': new THREE.Vector3(0, 1.55, 0),
-          }
-
-        }
+          target: {
+            positionTo: new THREE.Vector3(0, 1.55, 0),
+          },
+        },
       },
       // external
-      'external': {
-        'sea': {},
-        'grassland': {},
-        'snow': {}
+      external: {
+        sea: {},
+        grassland: {},
+        snow: {},
       },
       // scene, controls, renderer settings.
-      'settings': {
-        'sea': {},
-        'grassland': {},
-        'snow': {}
+      settings: {
+        sea: {},
+        grassland: {},
+        snow: {},
       },
-      'scenesAllowed': ['sea', 'grassland', 'snow', 'icosphere'],
-      'stageCurrentName': false,
+      scenesAllowed: ['sea', 'grassland', 'snow', 'icosphere'],
+      stageCurrentName: false,
     };
 
     // flog context for stageProps
     if (undefined === context.get.stageProps) {
-      context.add({ "name": "stageProps", "obj": stageProps });
+      context.add({ name: 'stageProps', obj: stageProps });
     }
 
     // Start Scene animation
     // Lock controls
     context.get.controls.enabled = false;
     iddleAnim();
-    let animQueue = [];
+    const animQueue = [];
 
     try {
-      animQueue.push({'concurrent':context.get.config.sceneStageAnim.concurrent});
+      animQueue.push({ concurrent: context.get.config.sceneStageAnim.concurrent });
       animQueue.push(() => {
         // animate target to safe height
         sceneStageAnim_setTarget(context.get.config.transitionTarget);
@@ -690,27 +689,30 @@ const Handlers = (() => {
       ).filter(checkAnimationIsExtended);
 
       for (const stage_prop_anim_current of current_stage_spawn_anim) {
-        console.log("WTF CURRENTS", stage_prop_anim_current);
+        console.log('WTF CURRENTS', stage_prop_anim_current);
         animQueue.push(stage_prop_anim_current);
       }
 
       // get listing of new props and iterate spawn animation for new stage
       const { Iteratable, target } = sceneStageAnim_getNextStage(stage);
       for (const stage_prop_anim_next of Iteratable) {
-        console.log("WTF NEXT", stage_prop_anim_next);
+        console.log('WTF NEXT', stage_prop_anim_next);
         animQueue.push(stage_prop_anim_next);
       }
 
-
       animQueue.push(() => {
-        if (undefined !== context.get.config.skydome.textures[context.get.config.sceneCurrentStage]) {
-          changeSky(context.get.config.skydome.textures[stage])
+        if (
+          undefined !== context.get.config.skydome.textures[context.get.config.sceneCurrentStage]
+        ) {
+          changeSky(context.get.config.skydome.textures[stage]);
         } else {
-          changeSky(context.get.config.skydome.textures[context.get.config.sceneDefaultStage])
+          changeSky(context.get.config.skydome.textures[context.get.config.sceneDefaultStage]);
         }
 
         context.get.config.sceneCurrentStage = stage;
-        sceneStageAnim_setTarget(context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target.positionTo);
+        sceneStageAnim_setTarget(
+          context.get.stageProps.bootProps[context.get.config.sceneCurrentStage].target.positionTo
+        );
         context.get.controls.enabled = true;
         context.get.controls.MaxDistance = context.get.config.controlsMaxDistance;
       });
@@ -730,23 +732,29 @@ const Handlers = (() => {
    * @param {THREE.Vector3} coords A final destination for the target  and subject.
    */
   const sceneStageAnim_setTarget = (coords) => {
-    console.group("sceneStageAnim_setTarget");
+    console.group('sceneStageAnim_setTarget');
     const tweenstack = [
       // Make animation concurrent
-      { 'concurrent': context.get.config.setTarget.concurrent },
+      { concurrent: context.get.config.setTarget.concurrent },
 
       // Orbit Controls Target
       [context.get.controls.target, coords],
 
       // Camera
-      [context.get.camera.position, new THREE.Vector3().addVectors(coords, context.coords.mainmenuitem_choose_a_setting)],
+      [
+        context.get.camera.position,
+        new THREE.Vector3().addVectors(coords, context.coords.mainmenuitem_choose_a_setting),
+      ],
 
       // Subject
-      [context.get.gltf.scene.getObjectByName(context.get.config.subject).position, coords, 700, () => {
-        context.get.config.sceneCurrentAnimation = '';
-
-      }],
-
+      [
+        context.get.gltf.scene.getObjectByName(context.get.config.subject).position,
+        coords,
+        700,
+        () => {
+          context.get.config.sceneCurrentAnimation = '';
+        },
+      ],
     ];
     tweeningTween(tweenstack);
     console.groupEnd();
@@ -756,11 +764,11 @@ const Handlers = (() => {
    * Fetches all props from all stages if no stage is defined
    * @alias module:Handlers.sceneStageAnim_getCurrentStage
    * @private
-   * @param {string} stage The currently enabled stage. 
+   * @param {string} stage The currently enabled stage.
    * @returns {array} an array of prop pointers.
    */
   const sceneStageAnim_getCurrentStage = (stage) => {
-    console.group("sceneStageAnim_getCurrentStage");
+    console.group('sceneStageAnim_getCurrentStage');
     const sp = context.get.stageProps;
     let Iterated = [];
     if (!stage) {
@@ -770,8 +778,7 @@ const Handlers = (() => {
           Iterated = [...Iterated, ...Iteratable];
         }
       }
-    }
-    else {
+    } else {
       const { Iteratable, target } = sceneStageAnim_getNextStage(stage);
       Iterated = Iteratable;
     }
@@ -780,36 +787,30 @@ const Handlers = (() => {
   };
 
   /**
-   * Looks up the required props to instantiate the scene by the provided stage string.              
+   * Looks up the required props to instantiate the scene by the provided stage string.
    * @alias module:Handlers.sceneStageAnim_getNextStage
    * @private
    * @param {string} stage The name of a pre existing stage from the context config object.
    * @returns {object} An object containing an array of prop names and a vector of the subject target for this scene.
    */
   const sceneStageAnim_getNextStage = (stage) => {
-    console.group("sceneStageAnim_getNextStage");
+    console.group('sceneStageAnim_getNextStage');
     const sp = context.get.stageProps;
     const Iteratable = [];
     let target;
 
     for (const propType in sp) {
-      if (
-        sp[propType].hasOwnProperty(stage)
-        &&
-        Object.keys(sp[propType][stage]).length > 0
-      ) {
+      if (sp[propType].hasOwnProperty(stage) && Object.keys(sp[propType][stage]).length > 0) {
         for (const prop in sp[propType][stage]) {
           console.log(prop);
-          if (
-            sp[propType][stage][prop].hasOwnProperty('spawnAnim')
-          ) {
+          if (sp[propType][stage][prop].hasOwnProperty('spawnAnim')) {
             Iteratable.push(sp[propType][stage][prop]['spawnAnim']);
             target = sp[propType][stage]['target'];
           }
         }
       }
     }
-    console.log("sceneStageAnim_getNextStage", stage, Iteratable, target);
+    console.log('sceneStageAnim_getNextStage', stage, Iteratable, target);
     console.groupEnd();
     return { Iteratable, target };
   };
@@ -820,7 +821,7 @@ const Handlers = (() => {
    * @alias module:Handlers.iddleAnim
    */
   const iddleAnim = () => {
-    console.group("iddleAnim");
+    console.group('iddleAnim');
 
     const timeToIddle = context.get.config.secToIddle;
 
@@ -829,16 +830,14 @@ const Handlers = (() => {
       window.clearTimeout(context.get.config.timeoutToIddle);
     }
 
-    context.get.config.timeoutToIddle = window.setTimeout(
-      (e) => {
-        simpleTween(context.get.camera.position, 
-          new THREE.Vector3().addVectors(context.get.controls.target, context.coords.cam_iddle)
-        );
-        context.get.controls.autoRotate = true;
-        console.log("ahem");
-      },
-      timeToIddle * 1000
-    );
+    context.get.config.timeoutToIddle = window.setTimeout((e) => {
+      simpleTween(
+        context.get.camera.position,
+        new THREE.Vector3().addVectors(context.get.controls.target, context.coords.cam_iddle)
+      );
+      context.get.controls.autoRotate = true;
+      console.log('ahem');
+    }, timeToIddle * 1000);
     console.groupEnd();
   };
 
@@ -850,27 +849,22 @@ const Handlers = (() => {
    * @returns void
    */
   const checkAnimationIsExtended = (spawnAnim) => {
-    console.group("checkAnimationIsExtended");
+    console.group('checkAnimationIsExtended');
     const saAction = context.get.mixer.clipAction(
-      THREE.AnimationClip.findByName(
-        context.get.gltf.animations,
-        spawnAnim
-      )
+      THREE.AnimationClip.findByName(context.get.gltf.animations, spawnAnim)
     );
     console.groupEnd();
-    return saAction.time > 0 && saAction.paused === true ?
-      true : false;
-
+    return saAction.time > 0 && saAction.paused === true ? true : false;
   };
 
   /**
    * Console based tool that gives out re usable local coordinates for posing the camera.
-   * 
+   *
    * @alias module:Handlers.getStarterView
    */
   const getStarterView = () => {
-    console.group("getStarterView");
-    let anim_start = {};
+    console.group('getStarterView');
+    const anim_start = {};
     // Import from context
     const camera = context.get.camera;
 
@@ -881,14 +875,13 @@ const Handlers = (() => {
     anim_start.camera_position = camera.position;
 
     // calculate relative camera position
-    console.log(camera.position, controls.target)
+    console.log(camera.position, controls.target);
     anim_start.relative_camera_position = camera.position.addScaledVector(controls.target, -1);
     anim_start.target = controls.target;
     anim_start.camera_rotation = camera.rotation;
     anim_start.object_rotation = controls.object.rotation;
     anim_start.azimuthal = controls.getAzimuthalAngle();
     anim_start.q = controls.object.quaternion;
-
 
     console.log(anim_start);
     console.groupEnd();
@@ -916,7 +909,6 @@ const Handlers = (() => {
     } catch (e) {
       console.log(`onWindowResize: ${e.message}`);
     }
-
   };
 
   /**
@@ -926,16 +918,16 @@ const Handlers = (() => {
    * @param {object} e Event object.
    */
   const on_AnimationClip_loop = (e) => {
-    console.log("LOOP!", e);
+    console.log('LOOP!', e);
   };
 
   /**
    * Handler Animation clip finished event
    * @alias module:Handlers.onMixerFinished
-   * @param {object} e Event object 
+   * @param {object} e Event object
    */
   const on_AnimationClip_finished = (e) => {
-    console.log("Animation clip finished: ", e.action._clip.name, e);
+    console.log('Animation clip finished: ', e.action._clip.name, e);
     context.get.config.currentAnimation = '';
     // Attempt next animation in queue if any.
     animationAnim();
@@ -947,15 +939,14 @@ const Handlers = (() => {
    * @listens change
    * @param {object} e Event Object.
    */
-  const on_controls_change = (e) => {
-  };
+  const on_controls_change = (e) => {};
 
   /**
    * Receive the event from Orbit Controls when user starts interaction.
    * @alias module:Handlers.onControlsStart
-   * @param {object} e 
+   * @param {object} e
    * @listens start
-   * 
+   *
    */
   const on_controls_start = (e) => {
     context.get.controls.autoRotate = false;
@@ -963,7 +954,7 @@ const Handlers = (() => {
 
   /**
    * Receive the event from Orbit Controls when user starts interaction.
-   * 
+   *
    * @alias module:Handlers.onControlsEnd
    * @param {object} e Event object.
    * @listens end
@@ -972,25 +963,24 @@ const Handlers = (() => {
     iddleAnim();
   };
 
-
   // Handlers return
   return {
-    'animationAnim': (anim) => animationAnim(anim),
-    'changeSky': (tex_) => changeSky(tex_),
-    'simpleAnim': (anim) => simpleAnim(anim),
-    'getStarterView': () => getStarterView(),
-    'SectionTween': (tid) => SectionTween(tid),
-    'onMixerFinished': (e) => on_AnimationClip_finished(e),
-    'onMixerLoop': (e) => on_AnimationClip_loop(e),
-    'onWindowResize': () => on_window_resize(),
-    'caseCharAnim': (anim) => caseCharAnim(anim),
-    'sceneStageAnim': (anim) => sceneStageAnim(anim),
-    'featureAnim': (feature) => featureAnim(feature),
-    'onColorTweenColor': (color) => onColorTweenColor(color),
-    'onControlsChange': (e) => on_controls_change(e),
-    'onControlsStart': (e) => on_controls_start(e),
-    'onControlsEnd': (e) => on_controls_end(e),
-  }
+    animationAnim: (anim) => animationAnim(anim),
+    changeSky: (tex_) => changeSky(tex_),
+    simpleAnim: (anim) => simpleAnim(anim),
+    getStarterView: () => getStarterView(),
+    SectionTween: (tid) => SectionTween(tid),
+    onMixerFinished: (e) => on_AnimationClip_finished(e),
+    onMixerLoop: (e) => on_AnimationClip_loop(e),
+    onWindowResize: () => on_window_resize(),
+    caseCharAnim: (anim) => caseCharAnim(anim),
+    sceneStageAnim: (anim) => sceneStageAnim(anim),
+    featureAnim: (feature) => featureAnim(feature),
+    onColorTweenColor: (color) => onColorTweenColor(color),
+    onControlsChange: (e) => on_controls_change(e),
+    onControlsStart: (e) => on_controls_start(e),
+    onControlsEnd: (e) => on_controls_end(e),
+  };
 })();
 
 // Handler exports

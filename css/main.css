@@ -6,7 +6,6 @@
 @import url('/css/mainmenuitem_choose_a_case.css');
 @import url('/css/mainmenuitem_get_the_dash.css');
 
-
 :root {
   --white: #ffffff;
   --light-grey: #edf0f1;
@@ -14,7 +13,6 @@
   --dark-violet: #5146e1;
   --black: #21232a;
   /* Variables for nav */
-
 }
 
 * {
@@ -33,7 +31,7 @@ a {
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   text-align: center;
   background: var(--light-grey);
   color: var(--white);
@@ -61,20 +59,21 @@ body {
   margin: 10vh;
   margin-top: 5vh;
   background: var(--white);
-  box-shadow: rgb(50 50 93 / 10%) 0 30px 60px -12px,
+  box-shadow:
+    rgb(50 50 93 / 10%) 0 30px 60px -12px,
     rgb(0 0 0 / 15%) 0 18px 36px -18px;
 }
 
-.nav [type="checkbox"] {
+.nav [type='checkbox'] {
   position: absolute;
   left: -9999px;
 }
 
-.nav [type="checkbox"] + label {
+.nav [type='checkbox'] + label {
   position: relative;
   width: max-content;
   height: 75px;
-  padding:1vh;
+  padding: 1vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,7 +86,7 @@ body {
   transition: all 0.2s;
 }
 
-.nav [type="checkbox"] + label:hover {
+.nav [type='checkbox'] + label:hover {
   background: var(--dark-violet);
 }
 
@@ -192,43 +191,45 @@ body {
 /*Custom Styles
 --------------------------------------------------- */
 
-#canvasroot {margin: 0;}
+#canvasroot {
+  margin: 0;
+}
 nav.nav-element {
-    overflow:visible;
-    position:fixed;
-    top:0;
-    width:100%;
-    height: 10vh;
-    background: rgba(120,120,120,0.5);
+  overflow: visible;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 10vh;
+  background: rgba(120, 120, 120, 0.5);
 }
 nav.nav-element div.container {
-    overflow:visible;
-    height: 10vh;
-    background: rgba(120,120,120,0.5);
+  overflow: visible;
+  height: 10vh;
+  background: rgba(120, 120, 120, 0.5);
 }
 
-nav.nav-element div.container>ul {
+nav.nav-element div.container > ul {
   display: flex;
   flex-direction: row;
 }
 
-nav.nav ul.mainmenuitem_get_the_dash  li a span{
-  color:#ffffff;
-  background-color:maroon;
-  border-radius: 3dvh
+nav.nav ul.mainmenuitem_get_the_dash li a span {
+  color: #ffffff;
+  background-color: maroon;
+  border-radius: 3dvh;
 }
 
 /**************************************color-picker*/
 footer.page-footer span {
-  right:0%;
-  color:black;
+  right: 0%;
+  color: black;
   background-color: white;
   padding: 1dvh;
   border-radius: 0.5em 0 0 0.5em;
-  position:relative;
+  position: relative;
   transition: right 1s;
 }
- footer.page-footer.hidden span {
+footer.page-footer.hidden span {
   right: -100%;
 }
 .selected {
@@ -243,50 +244,44 @@ footer.page-footer span {
 
 /**************************************config-menu*/
 
-
-#config_menu_container{
-  position:fixed;
+#config_menu_container {
+  position: fixed;
   display: flex;
   flex-direction: row;
   bottom: 3vh;
-  left:0%;
+  left: 0%;
 }
 
-#config_menu_gear i{
-  position:relative;
-  left:0%;
+#config_menu_gear i {
+  position: relative;
+  left: 0%;
   display: block;
-  color:rgba(245, 245, 245, 0.5);
+  color: rgba(245, 245, 245, 0.5);
   transition: left 1s;
 }
 
-#config_menu_gear.hidden i{
-  left:100%;
+#config_menu_gear.hidden i {
+  left: 100%;
 }
 
-#config_menu_gear i:hover{
-  color:rgba(95, 158, 160,1);
+#config_menu_gear i:hover {
+  color: rgba(95, 158, 160, 1);
 }
 
 #config_menu_items {
   position: relative;
-  display:flex;
+  display: flex;
   flex-direction: row;
-  left:0%;
+  left: 0%;
   transition: left 1s;
 }
 
 #config_menu_items.hidden {
-  left:-100%;
+  left: -100%;
 }
 
-.config_item_value{
-  padding:0.3em;
-  margin:0 0.3em;
+.config_item_value {
+  padding: 0.3em;
+  margin: 0 0.3em;
   border: 2px solid white;
-  
 }
-
-
-
-
