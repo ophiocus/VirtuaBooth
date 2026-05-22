@@ -1,0 +1,60 @@
+name: Build & Deploy to ophiocus.github.io
+
+# Builds VirtuaBooth (Vite app + JSDoc) and publishes the dist/ output to the
+# ophiocus.github.io GitHub Pages user-site (served from its main branch, root).
+# Cross-repo deploy uses an SSH deploy key:
+#   - public key  -> ophiocus.github.io  (deploy key, write access)
+#   - private key -> this repo's PAGES_DEPLOY_KEY secret
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (Vite + JSDoc)
+        run: npm run build
+
+      - name: Publish to ophiocus.github.io
+        env:
+          DEPLOY_KEY: ${{ secrets.PAGES_DEPLOY_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new"
+          # Disable Jekyll so asset folders (e.g. starting with _) are served as-is.
+          touch dist/.nojekyll
+          cd dist
+          git init -q
+          git checkout -q -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy VirtuaBooth @ ${GITHUB_SHA::7}"
+          # The published site is a generated artifact; force-push keeps the
+          # target repo a single, lean commit instead of accumulating binaries.
+          git push -f git@github.com:ophiocus/ophiocus.github.io.git main
