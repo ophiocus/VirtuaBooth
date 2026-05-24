@@ -7,6 +7,7 @@ import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { Context } from '/js/src/context.js';
 import { Handlers } from './handlers';
+import { LoaderOverlay } from './LoaderOverlay.js';
 
 /**
  * The Project Module.
@@ -411,6 +412,15 @@ const Project = (() => {
    */
   const gltf_scene_load = async () => {
     console.group('gltf_scene_load');
+    // Loading gate — shared LoaderOverlay synced from drupal-three-js-theme
+    // (src/shared/LoaderOverlay.ts). Do not edit here; fix upstream + re-sync.
+    const gate = new LoaderOverlay({
+      title: 'VirtuaBooth',
+      message: 'loading configurator',
+      namespace: 'vb-loader',
+      backgroundColor: '#101418',
+      color: '#d8dee6',
+    });
     const gltf_load_promise = new Promise((resolve, reject) => {
       try {
         // GLTF Loader
@@ -454,18 +464,21 @@ const Project = (() => {
 
             console.log(`Loader gltf ready for ${model.name}`);
 
+            gate.hide();
             resolve({ loader, gltf, mixer });
           },
           // called while loading is progressing
           (xhr) => {
-            console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+            gate.setProgress(xhr.loaded, xhr.total);
           },
           // called when loading has errors
           (error) => {
+            gate.dispose();
             console.log(`There was an Error Loading the GLTF: ${error.message}`, error);
           }
         );
       } catch (e) {
+        gate.dispose();
         console.log(e.message);
         reject(e);
       }

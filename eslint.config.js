@@ -10,7 +10,7 @@ export default [
   js.configs.recommended,
   prettier,
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    ignores: ['dist/**', 'node_modules/**', 'js/src/LoaderOverlay.ts'],
   },
   {
     files: ['js/**/*.js'],

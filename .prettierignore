@@ -6,3 +6,5 @@ textures
 hdri
 *.min.js
 *.min.css
+# Vendored from drupal-three-js-theme (source of truth); keep byte-identical.
+js/src/LoaderOverlay.ts
