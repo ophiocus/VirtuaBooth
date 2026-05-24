@@ -222,8 +222,11 @@ const Handlers = (() => {
       // Import writeable from context: skybox
       const skybox = context.get.skybox;
 
-      // Set emissive intensity.
-      obj.material.emissiveIntensity = 1;
+      // Legacy emissive 'Sky' mesh retired — the sky renders via scene.background
+      // (SOTA equirect background + IBL). Hide the GLTF Sky mesh if present.
+      if (obj) {
+        obj.visible = false;
+      }
 
       // Texture loader for the Sky Dome and Ground Projected Sky Box
       new THREE.TextureLoader().load(
@@ -237,10 +240,7 @@ const Handlers = (() => {
             texture.mapping = THREE.EquirectangularReflectionMapping;
             texture.colorSpace = THREE.SRGBColorSpace;
 
-            // Apply texture to SkyDome
-            obj.material.map = texture;
-            obj.material.emissiveMap = texture;
-            obj.material.needsUpdate = true;
+            // (Sky mesh hidden; the equirect drives scene.background + environment.)
 
             // // Reflog skybox
             const bgtex = texture.clone();
@@ -261,8 +261,7 @@ const Handlers = (() => {
             scene.background = bgtex;
             scene.environment = bgtex;
 
-            // general pipeline intensity
-            context.get.renderer.toneMappingExposure = 0.5;
+            // Exposure is configured once in renderer_set (no per-sky override).
           } catch (e) {
             console.error(e.message);
           }
